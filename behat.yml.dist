@@ -1,0 +1,11 @@
+default:
+    suites:
+        default:
+            contexts:
+                - Features\Bootstrap\FeatureContext
+
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: features/bootstrap.php
+            kernel:
+                environment: test
