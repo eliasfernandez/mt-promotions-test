@@ -4,10 +4,12 @@ namespace App\Domain\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 
+
 trait DiscountTrait
 {
-    #[ORM\Column(type: 'decimal', precision: 5, scale: 2, nullable: false)]
+    #[ORM\Column(type: 'decimal', precision: 4, scale: 2, nullable: false)]
     private string $percentage;
+
     public function getPercentage(): string
     {
         return $this->percentage;

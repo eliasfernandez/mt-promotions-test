@@ -18,9 +18,9 @@ class AppLargeFixtures extends Fixture implements FixtureGroupInterface
      */
     private array $categories = [];
     private array $names = [
-        'BV Lean leather ankle',
-        'Ashlington leather ankle',
-        'Naima embellished suede',
+        'BV Lean leather ankle ',
+        'Ashlington leather ankle ',
+        'Naima embellished suede ',
         'Nathane leather '
     ];
 
@@ -75,10 +75,12 @@ class AppLargeFixtures extends Fixture implements FixtureGroupInterface
     {
         $product = new Product();
 
-        $product->setName($this->names[array_rand($this->names)])
+        $category = $this->categories[array_rand($this->categories)];
+
+        $product->setName($this->names[array_rand($this->names)] . $category->getName())
             ->setPrice(new Price(rand(1_00, 1000_00)))
             ->setSku(sprintf('sku-%05d', $i))
-            ->setCategory($this->categories[array_rand($this->categories)]);
+            ->setCategory($category);
 
         return $product;
     }
