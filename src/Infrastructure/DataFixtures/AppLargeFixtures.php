@@ -26,9 +26,6 @@ class AppLargeFixtures extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        $manager->getConnection()->getConfiguration()->setSQLLogger(null);
-
-
         $this->initializeCategories();
 
         foreach ($this->categories as $category) {
@@ -36,7 +33,7 @@ class AppLargeFixtures extends Fixture implements FixtureGroupInterface
         }
 
         $bootsDiscount = new CategoryDiscount();
-        $bootsDiscount->setPercentage(30);
+        $bootsDiscount->setPercentage('30');
         $this->categories['boots']->addDiscount($bootsDiscount);
         $manager->persist($bootsDiscount);
 

@@ -20,10 +20,17 @@ class Category
     #[ORM\Column(length: 255)]
     private string $name;
 
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
 
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
     private Collection $products;
 
+
+    /**
+     * @var Collection<int, CategoryDiscount>
+     */
     #[ORM\OneToMany(targetEntity: CategoryDiscount::class, mappedBy: 'category')]
     private Collection $discounts;
 
@@ -57,6 +64,9 @@ class Category
         return $this;
     }
 
+    /**
+     * @return Collection<int, Product>
+     */
     public function getProducts(): Collection
     {
         return $this->products;
@@ -72,6 +82,9 @@ class Category
         return $this;
     }
 
+    /**
+     * @return Collection<int, CategoryDiscount>
+     */
     public function getDiscounts(): Collection
     {
         return $this->discounts;

@@ -27,6 +27,13 @@ class ProductDiscount implements DiscountInterface
         return $this->id;
     }
 
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getProduct(): Product
     {
         return $this->product;

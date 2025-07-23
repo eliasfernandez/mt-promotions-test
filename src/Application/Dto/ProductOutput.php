@@ -32,6 +32,9 @@ class ProductOutput implements \JsonSerializable
         return $this->price;
     }
 
+    /**
+     * @return array{sku: string, name: string, category: string, price: array{original: int, final: int, discount_percentage: string, currency: string}}
+     */
     public function jsonSerialize(): array
     {
         return [

@@ -4,7 +4,6 @@ namespace App\Domain\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 trait DiscountTrait
 {
     #[ORM\Column(type: 'decimal', precision: 4, scale: 2, nullable: false)]

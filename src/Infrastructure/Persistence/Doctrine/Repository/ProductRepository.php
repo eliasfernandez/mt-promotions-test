@@ -13,7 +13,7 @@ use IteratorAggregate;
 
 /**
  * @template Product of object
- * @extends \Doctrine\ORM\EntityRepository<Product>
+ * @extends ServiceEntityRepository<Product>
  */
 class ProductRepository extends ServiceEntityRepository implements ProductRepositoryInterface
 {

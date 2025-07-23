@@ -12,6 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ProductController extends AbstractController
 {
+    /**
+     * @param ProductRepository<Product> $productRepository
+     */
     #[Route('/products', name: 'app_product')]
     public function list(
         ProductRepository $productRepository,
@@ -22,14 +25,11 @@ class ProductController extends AbstractController
         ?string $category = null,
         #[MapQueryParameter(filter: \FILTER_VALIDATE_INT, options: ['min_range' => 1], validationFailedStatusCode: 404)]
         ?int $priceLessThan = null,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $products = $productRepository->filter($page, $category, $priceLessThan);
 
         if (null === $products) {
-            return $this->json([
-                'error' => 'No products found',
-            ], 404);
+            return $this->json(['error' => 'No products found',], 404);
         }
 
         return $this->json([
@@ -40,6 +40,5 @@ class ProductController extends AbstractController
                 iterator_to_array($products)
             ),
         ]);
-
     }
 }

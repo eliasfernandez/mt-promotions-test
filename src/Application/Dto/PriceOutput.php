@@ -32,6 +32,9 @@ class PriceOutput implements \JsonSerializable
         return $this->currency;
     }
 
+    /**
+     * @return array{original: int, final: int, discount_percentage: string, currency: string}
+     */
     public function jsonSerialize(): array
     {
         return [

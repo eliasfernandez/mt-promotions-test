@@ -32,7 +32,7 @@ class Product
     private Category $category;
 
     /**
-     * @var Collection<ProductDiscount>
+     * @var Collection<int, ProductDiscount>
      */
     #[ORM\OneToMany(targetEntity: ProductDiscount::class, mappedBy: 'product')]
     private Collection $discounts;
@@ -91,7 +91,7 @@ class Product
     }
 
     /**
-     * @return Collection<ProductDiscount>
+     * @return Collection<int, ProductDiscount>
      */
     public function getDiscounts(): Collection
     {
@@ -125,8 +125,8 @@ class Product
         }
 
         return (int) bcmul(
-            $this->price->getAmount(),
-            bcdiv($discountPercentage, 100, 2),
+            (string) $this->price->getAmount(),
+            bcdiv($discountPercentage, '100', 2),
             2
         );
     }
@@ -144,7 +144,10 @@ class Product
 
         return array_reduce(
             $discounts,
-            fn ($carry, DiscountInterface $item) => bccomp($item->getPercentage(), $carry) === 1 ? $item->getPercentage() : $carry,
+            fn ($carry, DiscountInterface $item) => bccomp(
+                $item->getPercentage(),
+                $carry
+            ) === 1 ? $item->getPercentage() : $carry,
             '0'
         );
     }
