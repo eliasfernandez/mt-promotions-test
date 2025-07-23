@@ -2,6 +2,8 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Traits\DiscountTrait;
+use App\Domain\Entity\Traits\TimestampTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

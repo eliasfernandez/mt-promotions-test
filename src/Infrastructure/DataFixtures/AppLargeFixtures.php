@@ -11,49 +11,46 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class AppFixtures extends Fixture implements FixtureGroupInterface
+class AppLargeFixtures extends Fixture implements FixtureGroupInterface
 {
     /**
      * @var array <string, Category>
      */
     private array $categories = [];
-
-    /**
-     * @var array <string, Product>
-     */
-    private array $products = [];
+    private array $names = [
+        'BV Lean leather ankle',
+        'Ashlington leather ankle',
+        'Naima embellished suede',
+        'Nathane leather '
+    ];
 
     public function load(ObjectManager $manager): void
     {
+        $manager->getConnection()->getConfiguration()->setSQLLogger(null);
+
+
         $this->initializeCategories();
 
         foreach ($this->categories as $category) {
             $manager->persist($category);
         }
 
-        $json = json_decode(
-            file_get_contents(__DIR__ . '/Resources/mt-test.json'),
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
+        $bootsDiscount = new CategoryDiscount();
+        $bootsDiscount->setPercentage(30);
+        $this->categories['boots']->addDiscount($bootsDiscount);
+        $manager->persist($bootsDiscount);
 
-        foreach ($json['products'] as $item) {
-            $this->products[$item['sku']] = $this->createProduct($item);
-            $manager->persist($this->products[$item['sku']]);
+        for ($i = 0; $i < 20000; $i++) {
+            $product = $this->createProduct($i);
+            $manager->persist($product);
+
+            if ($i % 100 === 0) {
+                $manager->flush();
+            }
         }
 
-        $bootsDiscount = new CategoryDiscount();
-        $bootsDiscount->setPercentage('30');
-        $this->categories['boots']->addDiscount($bootsDiscount);
-
-        $itemDiscount = new ProductDiscount();
-        $itemDiscount->setPercentage('15');
-        $this->products['000003']->addDiscount($itemDiscount);
-
-        $manager->persist($bootsDiscount);
-        $manager->persist($itemDiscount);
         $manager->flush();
+        $manager->clear();
     }
 
     private function initializeCategories(): void
@@ -74,21 +71,20 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         return $category;
     }
 
-    /**
-     * @return Product
-     */
-    public function createProduct(array $item): Product
+    public function createProduct(int $i): Product
     {
         $product = new Product();
-        $product->setName($item['name'])
-            ->setPrice(new Price($item['price']))
-            ->setSku($item['sku'])
-            ->setCategory($this->categories[$item['category']]);
+
+        $product->setName($this->names[array_rand($this->names)])
+            ->setPrice(new Price(rand(1_00, 1000_00)))
+            ->setSku(sprintf('sku-%05d', $i))
+            ->setCategory($this->categories[array_rand($this->categories)]);
+
         return $product;
     }
 
     public static function getGroups(): array
     {
-        return ['basic'];
+        return ['large'];
     }
 }

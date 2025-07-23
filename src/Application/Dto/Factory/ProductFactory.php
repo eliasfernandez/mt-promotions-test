@@ -17,7 +17,7 @@ class ProductFactory
             new PriceOutput(
                 $object->getPrice()->getAmount(),
                 $object->getFinalPrice()->getAmount(),
-                $object->getDiscountPercentage(),
+                $object->getDiscountPercentage() ? sprintf('%s%%', $object->getDiscountPercentage()) : null,
                 $object->getPrice()->getCurrency(),
             ),
         );

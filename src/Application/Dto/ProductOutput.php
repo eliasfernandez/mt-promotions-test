@@ -2,7 +2,7 @@
 
 namespace App\Application\Dto;
 
-class ProductOutput
+class ProductOutput implements \JsonSerializable
 {
     public function __construct(
         private string $sku,
@@ -30,5 +30,15 @@ class ProductOutput
     public function getPrice(): PriceOutput
     {
         return $this->price;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'sku' => $this->sku,
+            'name' => $this->name,
+            'category' => $this->category,
+            'price' => $this->getPrice()->jsonSerialize(),
+        ];
     }
 }

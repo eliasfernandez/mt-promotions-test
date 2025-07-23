@@ -61,7 +61,7 @@ class ProductFactoryTest extends TestCase
 
         $this->assertEquals(122_00, $dto->getPrice()->getOriginal());
         $this->assertEquals(119_56, $dto->getPrice()->getFinal());
-        $this->assertEquals('2.5', $dto->getPrice()->getDiscountPercentage());
+        $this->assertEquals('2.5%', $dto->getPrice()->getDiscountPercentage());
         $this->assertEquals('EUR', $dto->getPrice()->getCurrency());
     }
 }

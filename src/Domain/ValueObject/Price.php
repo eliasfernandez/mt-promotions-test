@@ -26,7 +26,7 @@ class Price
 
     public function getCurrency(): string
     {
-        return $this->currency;
+        return $this->currency ?? self::DEFAULT_CURRENCY;
     }
 
     public function equalsTo(Price $price): bool

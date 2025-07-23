@@ -2,7 +2,7 @@
 
 namespace App\Application\Dto;
 
-class PriceOutput
+class PriceOutput implements \JsonSerializable
 {
     public function __construct(
         private int $original,
@@ -30,5 +30,15 @@ class PriceOutput
     public function getCurrency(): string
     {
         return $this->currency;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'original' => $this->original,
+            'final' => $this->final,
+            'discount_percentage' => $this->discountPercentage,
+            'currency' => $this->currency,
+        ];
     }
 }

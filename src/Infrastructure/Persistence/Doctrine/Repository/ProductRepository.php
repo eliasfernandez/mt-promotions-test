@@ -2,26 +2,55 @@
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository;
 
-use App\Domain\Entity\Category;
+use App\Domain\Entity\Product;
 use App\Domain\Repository\ProductRepositoryInterface;
-use App\Domain\ValueObject\Price;
+use Countable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
+use IteratorAggregate;
 
+/**
+ * @template Product of object
+ * @extends \Doctrine\ORM\EntityRepository<Product>
+ */
 class ProductRepository extends ServiceEntityRepository implements ProductRepositoryInterface
 {
+    public const RESULT_PER_PAGE = 5;
 
-    public function findAllByCategory(Category $category, int $page = 1): iterable
+    public function __construct(ManagerRegistry $registry)
     {
-        // TODO: Implement findAllByCategory() method.
+        parent::__construct($registry, Product::class);
     }
 
-    public function findAllByPriceLessThan(Price $price, int $page = 1): iterable
+    public function filter(int $page, ?string $category, ?int $priceLessThan): IteratorAggregate|Countable|null
     {
-        // TODO: Implement findAllByPriceLessThan() method.
+        $builder = $this->createQueryBuilder('p');
+        if (null !== $category && '' !== $category) {
+            $builder->where('p.category = :category')
+                ->setParameter('category', $category);
+        }
+        if (null !== $priceLessThan) {
+            $builder->andWhere('p.price.amount <= :priceLessThan')
+                ->setParameter('priceLessThan', $priceLessThan);
+        }
+        $query = $builder->getQuery();
+
+        return $this->paginate($query, $page);
     }
 
-    public function all(int $page = 1): iterable
+    private function paginate(Query $query, int $page): IteratorAggregate|Countable|null
     {
+        $firstResult = ($page - 1) * self::RESULT_PER_PAGE;
+        $query->setFirstResult($firstResult)
+            ->setMaxResults(self::RESULT_PER_PAGE);
+        $paginator = new Paginator($query);
 
+        if (count($paginator) <= $firstResult) {
+            return null;
+        }
+
+        return $paginator;
     }
 }

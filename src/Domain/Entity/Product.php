@@ -2,13 +2,16 @@
 
 namespace App\Domain\Entity;
 
+use App\Domain\Entity\Traits\TimestampTrait;
 use App\Domain\ValueObject\Price;
 use App\Infrastructure\Persistence\Doctrine\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: staticRepository::class)]
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Index(name: "price_idx", columns: ["price_amount"])]
+#[ORM\Index(name: "category_idx", columns: ["category"])]
 #[ORM\HasLifecycleCallbacks]
 class Product
 {
@@ -28,7 +31,10 @@ class Product
     #[ORM\JoinColumn(name: 'category', referencedColumnName: 'identifier', nullable: false)]
     private Category $category;
 
-    #[ORM\OneToMany(targetEntity: CategoryDiscount::class, mappedBy: 'product')]
+    /**
+     * @var Collection<ProductDiscount>
+     */
+    #[ORM\OneToMany(targetEntity: ProductDiscount::class, mappedBy: 'product')]
     private Collection $discounts;
 
     public function __construct()
@@ -36,7 +42,7 @@ class Product
         $this->discounts = new ArrayCollection();
     }
 
-    public function getSku(): ?string
+    public function getSku(): string
     {
         return $this->sku;
     }
@@ -84,6 +90,9 @@ class Product
         return $this;
     }
 
+    /**
+     * @return Collection<ProductDiscount>
+     */
     public function getDiscounts(): Collection
     {
         return $this->discounts;
@@ -136,7 +145,7 @@ class Product
         return array_reduce(
             $discounts,
             fn ($carry, DiscountInterface $item) => bccomp($item->getPercentage(), $carry) === 1 ? $item->getPercentage() : $carry,
-            0
+            '0'
         );
     }
 }
